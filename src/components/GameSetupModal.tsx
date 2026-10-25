@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { GameMode, AIDifficulty, AIPersonality, BoardSize, MatchFormat, ActivePlayer } from '../types';
 import { User, Cpu, Play, Sparkles, Grid, Trophy, MessageSquare } from 'lucide-react';
+import { Logo } from './Logo';
 
 interface GameSetupModalProps {
   isOpen: boolean;
@@ -51,15 +52,16 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-lg p-4 overflow-y-auto animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-lg p-4 overflow-y-auto animate-fadeIn select-none">
       <div className="glass-panel p-6 sm:p-8 rounded-3xl max-w-lg w-full border border-slate-700/60 shadow-2xl space-y-6 my-auto">
         {/* Header Title */}
-        <div className="text-center space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold">
-            <Sparkles className="w-3.5 h-3.5" /> PRE-GAME MATCH SETUP
+        <div className="text-center space-y-1.5 flex flex-col items-center">
+          <Logo size="lg" className="mb-1" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold">
+            <Sparkles className="w-3.5 h-3.5" /> BRAIN XO BATTLE
           </div>
-          <h2 className="text-3xl font-black tracking-tight text-slate-100">XOX</h2>
-          <p className="text-xs text-slate-400">Think. Predict. Win.</p>
+          <h2 className="text-3xl font-black tracking-tight text-slate-100">XO MIND</h2>
+          <p className="text-xs text-slate-400 font-medium">Strategy meets AI</p>
         </div>
 
         {/* 1. Mode Selector */}

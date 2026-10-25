@@ -30,17 +30,27 @@ export const PlayerIndicator: React.FC<PlayerIndicatorProps> = ({
 }) => {
   const isXTurn = currentPlayer === 'X';
   const isOTurn = currentPlayer === 'O';
-  const isAITurn = mode === 'vs-ai' && currentPlayer !== humanSymbol;
 
   const getName = (symbol: ActivePlayer) => {
     if (mode === 'vs-ai') {
-      return symbol === humanSymbol ? playerXName || 'You' : `AI (${difficulty.toUpperCase()})`;
+      if (symbol === humanSymbol) {
+        return (symbol === 'X' ? playerXName : playerOName) || 'You';
+      }
+      return `AI (${difficulty.toUpperCase()})`;
     }
     return symbol === 'X' ? playerXName || 'Player X' : playerOName || 'Player O';
   };
 
+  const isHuman = (symbol: ActivePlayer) => {
+    if (mode === 'vs-human') return true;
+    return symbol === humanSymbol;
+  };
+
+  const isXThinking = isXTurn && gameStatus === 'playing' && mode === 'vs-ai' && humanSymbol !== 'X' && isAIThinking;
+  const isOThinking = isOTurn && gameStatus === 'playing' && mode === 'vs-ai' && humanSymbol !== 'O' && isAIThinking;
+
   return (
-    <div className="w-full max-w-md mx-auto space-y-3">
+    <div className="w-full max-w-md mx-auto space-y-3 select-none">
       {/* Match Series Progress Header */}
       {matchState.format !== 'single' && (
         <div className="flex items-center justify-between text-xs font-semibold tracking-wider text-slate-400 px-2">
@@ -69,13 +79,23 @@ export const PlayerIndicator: React.FC<PlayerIndicatorProps> = ({
           </div>
 
           <div className="min-w-0 flex-1">
-            <div className="text-xs text-slate-400 font-medium truncate flex items-center gap-1">
-              {mode === 'vs-ai' && humanSymbol === 'X' ? <User className="w-3 h-3 text-cyan-400" /> : null}
-              {getName('X')}
+            <div className="text-xs text-slate-400 font-medium truncate flex items-center gap-1.5">
+              {isHuman('X') ? (
+                <User className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+              ) : (
+                <Cpu className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+              )}
+              <span className="truncate">{getName('X')}</span>
             </div>
             <div className="text-xs font-bold text-slate-200">
               {isXTurn && gameStatus === 'playing' ? (
-                <span className="text-cyan-400 animate-pulse">YOUR TURN</span>
+                isXThinking ? (
+                  <span className="text-indigo-400 flex items-center gap-1">
+                    <Loader2 className="w-3 h-3 animate-spin" /> THINKING
+                  </span>
+                ) : (
+                  <span className="text-cyan-400 animate-pulse">YOUR TURN</span>
+                )
               ) : (
                 <span className="text-slate-500">WAITING</span>
               )}
@@ -101,13 +121,17 @@ export const PlayerIndicator: React.FC<PlayerIndicatorProps> = ({
           </div>
 
           <div className="min-w-0 flex-1">
-            <div className="text-xs text-slate-400 font-medium truncate flex items-center gap-1">
-              {mode === 'vs-ai' && humanSymbol === 'O' ? <User className="w-3 h-3 text-rose-400" /> : <Cpu className="w-3 h-3 text-purple-400" />}
-              {getName('O')}
+            <div className="text-xs text-slate-400 font-medium truncate flex items-center gap-1.5">
+              {isHuman('O') ? (
+                <User className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+              ) : (
+                <Cpu className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+              )}
+              <span className="truncate">{getName('O')}</span>
             </div>
             <div className="text-xs font-bold text-slate-200">
               {isOTurn && gameStatus === 'playing' ? (
-                isAITurn && isAIThinking ? (
+                isOThinking ? (
                   <span className="text-purple-400 flex items-center gap-1">
                     <Loader2 className="w-3 h-3 animate-spin" /> THINKING
                   </span>

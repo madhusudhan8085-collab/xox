@@ -184,3 +184,39 @@ export function detectForks(board: PlayerSymbol[], size: BoardSize, player: Acti
 
   return forkMoves;
 }
+
+/**
+ * Calculates live engine win probability and board evaluation for X vs O
+ */
+export function getBoardEvaluation(
+  board: PlayerSymbol[],
+  size: BoardSize
+): { score: number; label: string; xWinChance: number } {
+  const winnerInfo = checkWinner(board, size);
+  if (winnerInfo) {
+    if (winnerInfo.winner === 'X') {
+      return { score: 100, label: 'X Victory', xWinChance: 100 };
+    }
+    return { score: -100, label: 'O Victory', xWinChance: 0 };
+  }
+
+  if (isBoardFull(board)) {
+    return { score: 0, label: 'Draw Game', xWinChance: 50 };
+  }
+
+  const rawScore = evaluateBoard(board, size, 'X');
+  // Smooth non-linear mapping
+  const normalized = Math.tanh(rawScore / 350);
+  const score = Math.round(normalized * 100);
+  const xWinChance = Math.min(99, Math.max(1, Math.round(50 + normalized * 48)));
+
+  let label = 'Even (50/50)';
+  if (score >= 60) label = 'X Winning';
+  else if (score >= 25) label = 'Advantage X';
+  else if (score >= 10) label = 'Slight Edge X';
+  else if (score <= -60) label = 'O Winning';
+  else if (score <= -25) label = 'Advantage O';
+  else if (score <= -10) label = 'Slight Edge O';
+
+  return { score, label, xWinChance };
+}

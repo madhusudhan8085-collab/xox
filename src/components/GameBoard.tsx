@@ -10,6 +10,7 @@ interface GameBoardProps {
   disabled: boolean;
   onCellClick: (index: number) => void;
   reducedMotion?: boolean;
+  hoverSymbol?: PlayerSymbol;
 }
 
 export const GameBoard: React.FC<GameBoardProps> = ({
@@ -20,6 +21,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   disabled,
   onCellClick,
   reducedMotion = false,
+  hoverSymbol,
 }) => {
   const getGridColsClass = (size: BoardSize) => {
     switch (size) {
@@ -34,14 +36,31 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     }
   };
 
+  const getMaxWidthClass = (size: BoardSize) => {
+    switch (size) {
+      case 3:
+        return 'max-w-[340px] sm:max-w-[390px]';
+      case 4:
+        return 'max-w-[390px] sm:max-w-[440px]';
+      case 5:
+        return 'max-w-[420px] sm:max-w-[480px]';
+      default:
+        return 'max-w-[360px] sm:max-w-[400px]';
+    }
+  };
+
   const isWinningCell = (index: number) => {
     return winningLine ? winningLine.indices.includes(index) : false;
   };
 
   return (
-    <div className="relative w-full max-w-md mx-auto p-4 sm:p-6 rounded-3xl glass-panel shadow-2xl border border-slate-700/40">
+    <div
+      className={`relative w-full ${getMaxWidthClass(
+        boardSize
+      )} mx-auto p-3.5 sm:p-5 rounded-3xl glass-panel shadow-2xl border border-slate-700/40 select-none transition-all duration-300`}
+    >
       {/* Dynamic Grid Layout */}
-      <div className={`grid ${getGridColsClass(boardSize)} gap-2.5 sm:gap-3.5 w-full`}>
+      <div className={`grid ${getGridColsClass(boardSize)} gap-2 sm:gap-3 w-full`}>
         {board.map((cellValue, idx) => (
           <Cell
             key={idx}
@@ -52,6 +71,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({
             disabled={disabled}
             onClick={onCellClick}
             reducedMotion={reducedMotion}
+            hoverPreview={hoverSymbol}
+            shortcutKey={boardSize === 3 ? String(idx + 1) : undefined}
           />
         ))}
       </div>

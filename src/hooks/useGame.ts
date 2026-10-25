@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type {
   PlayerSymbol,
   ActivePlayer,
@@ -16,9 +16,11 @@ import type {
   MatchState,
   SettingsState,
   Achievement,
+  BoardEvaluation,
 } from '../types';
 import { checkWinner, isBoardFull } from '../game/winChecker';
 import { getAIMove } from '../game/ai/difficulty';
+import { getBoardEvaluation } from '../game/ai/heuristicSolver';
 import { analyzeGame } from '../game/analyzer';
 import { soundManager } from '../utils/sound';
 import { fireConfetti } from '../utils/confetti';
@@ -58,7 +60,7 @@ export function useGame() {
   // History & Undo Stacks
   const [moveRecords, setMoveRecords] = useState<MoveRecord[]>([]);
   const [undoStack, setUndoStack] = useState<{ board: PlayerSymbol[]; player: ActivePlayer }[]>([]);
-  const [gameStartTime, setGameStartTime] = useState<number>(Date.now());
+  const [gameStartTime, setGameStartTime] = useState<number>(() => Date.now());
   const [latestAnalysis, setLatestAnalysis] = useState<GameAnalysis | null>(null);
 
   // Match Series State
@@ -75,8 +77,11 @@ export function useGame() {
 
   // Keep ref to avoid stale closure during async AI turns
   const boardRef = useRef(board);
-  boardRef.current = board;
   const aiScheduledRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    boardRef.current = board;
+  }, [board]);
 
   // Sync settings with localStorage
   useEffect(() => {
@@ -272,7 +277,7 @@ export function useGame() {
       });
 
       // Update Session History Log
-      const opponentName = mode === 'vs-ai' ? `XOX AI (${difficulty.toUpperCase()})` : settings.playerOName || 'Player 2';
+      const opponentName = mode === 'vs-ai' ? `XO Mind AI (${difficulty.toUpperCase()})` : settings.playerOName || 'Player 2';
       const historyItem: GameHistoryItem = {
         id: 'game_' + Date.now(),
         gameNumber: history.length + 1,
@@ -286,6 +291,7 @@ export function useGame() {
         boardSize,
         matchFormat,
         analysis,
+        moves: [...moves],
       };
 
       setHistory((prev) => [historyItem, ...prev.slice(0, 49)]);
@@ -499,6 +505,10 @@ export function useGame() {
     setSuggestedMove(recommended);
   }, [gameStatus, isAIThinking, board, boardSize, currentPlayer]);
 
+  const evaluation: BoardEvaluation = useMemo(() => {
+    return getBoardEvaluation(board, boardSize);
+  }, [board, boardSize]);
+
   /**
    * Reset Score Action
    */
@@ -528,6 +538,7 @@ export function useGame() {
     suggestedMove,
     moveRecords,
     latestAnalysis,
+    evaluation,
 
     // Stats & History
     scores,

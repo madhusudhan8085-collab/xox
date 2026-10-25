@@ -2,75 +2,84 @@
 
 @layer base {
   :root {
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --card-bg: rgba(30, 41, 59, 0.75);
-    --card-border: rgba(255, 255, 255, 0.1);
+    --bg-primary: #080d1a;
+    --bg-secondary: #0f172a;
+    --card-bg: rgba(15, 23, 42, 0.78);
+    --card-border: rgba(255, 255, 255, 0.12);
     --text-primary: #f8fafc;
     --text-muted: #94a3b8;
     --accent-x: #38bdf8;
-    --accent-x-glow: rgba(56, 189, 248, 0.4);
-    --accent-o: #f43f5e;
-    --accent-o-glow: rgba(244, 63, 94, 0.4);
+    --accent-x-glow: rgba(56, 189, 248, 0.45);
+    --accent-o: #fb7185;
+    --accent-o-glow: rgba(251, 113, 133, 0.45);
     --grid-line: rgba(255, 255, 255, 0.1);
   }
 
   .light {
-    --bg-primary: #f8fafc;
+    --bg-primary: #f1f5f9;
     --bg-secondary: #ffffff;
-    --card-bg: rgba(255, 255, 255, 0.9);
-    --card-border: rgba(0, 0, 0, 0.1);
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --card-border: rgba(203, 213, 225, 0.8);
     --text-primary: #0f172a;
     --text-muted: #475569;
     --accent-x: #0284c7;
     --accent-x-glow: rgba(2, 132, 199, 0.25);
     --accent-o: #e11d48;
     --accent-o-glow: rgba(225, 29, 72, 0.25);
-    --grid-line: rgba(0, 0, 0, 0.1);
+    --grid-line: rgba(203, 213, 225, 0.6);
   }
 }
 
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   min-height: 100vh;
   margin: 0;
   overflow-x: hidden;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  touch-action: manipulation;
 }
 
 /* Glassmorphism utility */
 .glass-panel {
   background: var(--card-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--card-border);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
 }
 
 .glass-card {
   background: var(--card-bg);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--card-border);
 }
 
-/* Light mode typography & contrast enhancements */
+/* Light mode overrides for high-contrast crisp aesthetics */
+.light .glass-panel {
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.08);
+}
 .light .text-slate-100 { color: #0f172a !important; }
 .light .text-slate-200 { color: #1e293b !important; }
 .light .text-slate-300 { color: #334155 !important; }
 .light .text-slate-400 { color: #475569 !important; }
 .light .text-slate-500 { color: #64748b !important; }
-.light .bg-slate-900 { background-color: #f1f5f9 !important; }
-.light .bg-slate-800 { background-color: #e2e8f0 !important; }
-.light .border-slate-800 { border-color: #cbd5e1 !important; }
-.light .border-slate-700 { border-color: #94a3b8 !important; }
+.light .bg-slate-900 { background-color: #ffffff !important; }
+.light .bg-slate-800 { background-color: #f8fafc !important; }
+.light [class*="bg-slate-900\/"] { background-color: rgba(255, 255, 255, 0.95) !important; }
+.light [class*="bg-slate-800\/"] { background-color: rgba(241, 245, 249, 0.85) !important; }
+.light [class*="bg-slate-950\/"] { background-color: rgba(15, 23, 42, 0.45) !important; }
+.light [class*="border-slate-800"] { border-color: #e2e8f0 !important; }
+.light [class*="border-slate-700"] { border-color: #cbd5e1 !important; }
+.light [class*="hover:bg-slate-800"]:hover { background-color: #e2e8f0 !important; }
 
 /* SVG Line Animations */
 .draw-path {
   stroke-dasharray: 200;
   stroke-dashoffset: 200;
-  animation: draw 0.4s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  animation: draw 0.35s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
 @keyframes draw {
@@ -80,22 +89,22 @@ body {
 }
 
 .glow-x {
-  filter: drop-shadow(0 0 8px var(--accent-x-glow));
+  filter: drop-shadow(0 0 10px var(--accent-x-glow));
 }
 
 .glow-o {
-  filter: drop-shadow(0 0 8px var(--accent-o-glow));
+  filter: drop-shadow(0 0 10px var(--accent-o-glow));
 }
 
 .glow-win {
-  filter: drop-shadow(0 0 12px rgba(234, 179, 8, 0.6));
+  filter: drop-shadow(0 0 14px rgba(245, 158, 11, 0.7));
 }
 
 /* Winning Line Animation */
 .winning-line-anim {
   stroke-dasharray: 600;
   stroke-dashoffset: 600;
-  animation: drawLine 0.5s ease-out forwards;
+  animation: drawLine 0.45s ease-out forwards;
 }
 
 @keyframes drawLine {
@@ -107,16 +116,25 @@ body {
 /* AI Thinking Pulse */
 @keyframes pulseGlow {
   0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.9; transform: scale(1.03); }
+  50% { opacity: 0.95; transform: scale(1.025); }
 }
 
 .animate-pulse-glow {
   animation: pulseGlow 1.8s infinite ease-in-out;
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* Reduced Motion Override */
 @media (prefers-reduced-motion: reduce) {
-  .draw-path, .winning-line-anim, .animate-pulse-glow {
+  .draw-path, .winning-line-anim, .animate-pulse-glow, .animate-fadeIn {
     animation: none !important;
     stroke-dashoffset: 0 !important;
   }

@@ -39,7 +39,7 @@ export const DEFAULT_DAILY_STATE: DailyChallengeState = {
 };
 
 export const INITIAL_ACHIEVEMENTS: Achievement[] = [
-  { id: 'first_win', title: 'First Victory', description: 'Win your very first XOX game.', iconName: 'Trophy', unlocked: false },
+  { id: 'first_win', title: 'First Victory', description: 'Win your very first XO Mind game.', iconName: 'Trophy', unlocked: false },
   { id: 'win_streak_3', title: 'On Fire', description: 'Achieve a 3-game win streak.', iconName: 'Flame', unlocked: false },
   { id: 'win_streak_5', title: 'Dominator', description: 'Achieve a 5-game win streak.', iconName: 'Zap', unlocked: false },
   { id: 'beat_hard_ai', title: 'AI Crusher', description: 'Defeat the Hard AI opponent.', iconName: 'Cpu', unlocked: false },

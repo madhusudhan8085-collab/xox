@@ -28,6 +28,12 @@ export interface GameAnalysis {
   winnerHighlights?: number[];
 }
 
+export interface BoardEvaluation {
+  score: number;
+  label: string;
+  xWinChance: number;
+}
+
 export interface GameHistoryItem {
   id: string;
   gameNumber: number;
@@ -41,6 +47,7 @@ export interface GameHistoryItem {
   boardSize: BoardSize;
   matchFormat: MatchFormat;
   analysis?: GameAnalysis;
+  moves?: MoveRecord[];
 }
 
 export interface ScoreState {

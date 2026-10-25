@@ -1,6 +1,6 @@
 import React from 'react';
 import type { ActivePlayer, GameStatus, GameAnalysis, MatchState, GameMode } from '../types';
-import { Trophy, ShieldAlert, Sparkles, ArrowRight, RotateCcw } from 'lucide-react';
+import { Trophy, ShieldAlert, Sparkles, ArrowRight, RotateCcw, Film } from 'lucide-react';
 
 interface GameResultModalProps {
   gameStatus: GameStatus;
@@ -8,10 +8,12 @@ interface GameResultModalProps {
   analysis: GameAnalysis | null;
   matchState: MatchState;
   mode: GameMode;
+  humanSymbol: ActivePlayer;
   playerXName: string;
   playerOName: string;
   onNextGame: () => void;
   onNewSetup: () => void;
+  onOpenReplay?: () => void;
 }
 
 export const GameResultModal: React.FC<GameResultModalProps> = ({
@@ -20,10 +22,12 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
   analysis,
   matchState,
   mode,
+  humanSymbol,
   playerXName,
   playerOName,
   onNextGame,
   onNewSetup,
+  onOpenReplay,
 }) => {
   if (gameStatus !== 'won' && gameStatus !== 'draw') return null;
 
@@ -32,18 +36,29 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
 
   const getWinnerText = () => {
     if (isMatchOver) {
-      if (matchWinner === 'X') return `${playerXName || 'Player X'} Wins the Match!`;
-      if (matchWinner === 'O') return `${mode === 'vs-ai' ? 'XOX AI' : playerOName || 'Player O'} Wins the Match!`;
-      return 'Match Series Tied!';
+      if (matchWinner === 'tied') return 'Match Series Tied!';
+      if (mode === 'vs-ai') {
+        const isHumanWinner = matchWinner === humanSymbol;
+        const humanName = humanSymbol === 'X' ? playerXName || 'You' : playerOName || 'You';
+        return isHumanWinner ? `${humanName} Won the Match!` : 'AI Won the Match!';
+      }
+      return `${matchWinner === 'X' ? playerXName || 'Player X' : playerOName || 'Player O'} Won the Match!`;
     }
+
     if (winner === 'draw') return 'Draw Game';
-    if (winner === 'X') return `${playerXName || 'Player X'} Victory!`;
-    return `${mode === 'vs-ai' ? 'XOX AI' : playerOName || 'Player O'} Victory!`;
+
+    if (mode === 'vs-ai') {
+      const isHumanWinner = winner === humanSymbol;
+      const humanName = humanSymbol === 'X' ? playerXName || 'You' : playerOName || 'You';
+      return isHumanWinner ? `${humanName} Victory!` : 'AI Victory!';
+    }
+
+    return `${winner === 'X' ? playerXName || 'Player X' : playerOName || 'Player O'} Victory!`;
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 animate-fadeIn">
-      <div className="glass-panel p-6 sm:p-8 rounded-3xl max-w-md w-full border border-slate-700/60 shadow-2xl space-y-6 text-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 animate-fadeIn select-none">
+      <div className="glass-panel p-6 sm:p-8 rounded-3xl max-w-md w-full border border-slate-700/60 shadow-2xl space-y-5 text-center">
         {/* Banner Icon */}
         <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 via-purple-500 to-indigo-500 p-0.5 shadow-xl shadow-amber-500/20">
           <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center">
@@ -91,22 +106,34 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
         )}
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-3 pt-2">
-          <button
-            onClick={onNewSetup}
-            className="flex-1 py-3 px-4 rounded-2xl glass-card hover:bg-slate-800 text-slate-300 font-semibold text-xs flex items-center justify-center gap-1.5 transition-all"
-          >
-            <RotateCcw className="w-4 h-4" />
-            <span>Setup</span>
-          </button>
+        <div className="space-y-2.5 pt-1">
+          {onOpenReplay && (
+            <button
+              onClick={onOpenReplay}
+              className="w-full py-2.5 px-4 rounded-2xl glass-card hover:bg-slate-800 text-cyan-300 font-bold text-xs flex items-center justify-center gap-2 border border-cyan-500/30 transition-all hover:scale-[1.01]"
+            >
+              <Film className="w-4 h-4 text-cyan-400" />
+              <span>Step-by-Step Move Replay</span>
+            </button>
+          )}
 
-          <button
-            onClick={onNextGame}
-            className="flex-2 py-3 px-5 rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-600 to-cyan-500 hover:opacity-95 text-white font-black text-xs flex items-center justify-center gap-2 shadow-xl shadow-indigo-500/25 transition-all active:scale-95"
-          >
-            <span>{isMatchOver ? 'Play Again' : 'Next Game'}</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onNewSetup}
+              className="flex-1 py-3 px-4 rounded-2xl glass-card hover:bg-slate-800 text-slate-300 font-semibold text-xs flex items-center justify-center gap-1.5 transition-all"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Setup</span>
+            </button>
+
+            <button
+              onClick={onNextGame}
+              className="flex-2 py-3 px-5 rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-600 to-cyan-500 hover:opacity-95 text-white font-black text-xs flex items-center justify-center gap-2 shadow-xl shadow-indigo-500/25 transition-all active:scale-95"
+            >
+              <span>{isMatchOver ? 'Play Again' : 'Next Game'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

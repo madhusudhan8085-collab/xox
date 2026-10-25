@@ -1,19 +1,25 @@
 import React from 'react';
 import type { GameHistoryItem } from '../types';
-import { History, X, Clock } from 'lucide-react';
+import { History, X, Clock, Play } from 'lucide-react';
 import { formatDate } from '../utils/formatters';
 
 interface GameHistoryModalProps {
   isOpen: boolean;
   onClose: () => void;
   history: GameHistoryItem[];
+  onSelectReplay?: (item: GameHistoryItem) => void;
 }
 
-export const GameHistoryModal: React.FC<GameHistoryModalProps> = ({ isOpen, onClose, history }) => {
+export const GameHistoryModal: React.FC<GameHistoryModalProps> = ({
+  isOpen,
+  onClose,
+  history,
+  onSelectReplay,
+}) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-lg p-4 overflow-y-auto animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-lg p-4 overflow-y-auto animate-fadeIn select-none">
       <div className="glass-panel p-6 sm:p-8 rounded-3xl max-w-lg w-full border border-slate-700/60 shadow-2xl space-y-6 my-auto max-h-[85vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between shrink-0">
@@ -38,7 +44,7 @@ export const GameHistoryModal: React.FC<GameHistoryModalProps> = ({ isOpen, onCl
             history.map((item) => (
               <div
                 key={item.id}
-                className="glass-card p-4 rounded-2xl border border-slate-800 space-y-2 hover:bg-slate-800/40 transition-colors"
+                className="glass-card p-4 rounded-2xl border border-slate-800 space-y-2.5 hover:bg-slate-800/40 transition-colors"
               >
                 <div className="flex items-center justify-between text-xs">
                   <div className="font-extrabold text-slate-200 flex items-center gap-1.5">
@@ -59,12 +65,26 @@ export const GameHistoryModal: React.FC<GameHistoryModalProps> = ({ isOpen, onCl
                     >
                       {item.winner === 'draw' ? 'Draw' : `Winner: ${item.winner}`}
                     </span>
-                    <span className="text-[10px] text-slate-400">{item.boardSize}×{item.boardSize} Board</span>
+                    <span className="text-[10px] text-slate-400">
+                      {item.boardSize}×{item.boardSize} Board
+                    </span>
                   </div>
 
                   <div className="flex items-center gap-3 text-slate-400 text-[11px]">
                     <span>{item.movesCount} moves</span>
-                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {item.durationSeconds}s</span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" /> {item.durationSeconds}s
+                    </span>
+
+                    {item.moves && item.moves.length > 0 && onSelectReplay && (
+                      <button
+                        onClick={() => onSelectReplay(item)}
+                        className="px-2 py-0.5 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/30 font-bold text-[10px] flex items-center gap-1 transition-all"
+                        title="Replay match"
+                      >
+                        <Play className="w-2.5 h-2.5 fill-current" /> Replay
+                      </button>
+                    )}
                   </div>
                 </div>
 
